@@ -1,0 +1,19 @@
+{
+  "name": "turbokube",
+  "version": "0.1.0",
+  "description": "Container devloops",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turbokube/monorepo.git"
+  },
+  "author": "solsson",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/turbokube/monorepo/issues"
+  },
+  "homepage": "https://github.com/turbokube/monorepo#readme"
+}
