@@ -35,7 +35,7 @@ When ready for production, the following is clearly reviewable from an ops persp
 
 ## Getting started
 
- 1. Add `127.0.0.1 turbokube.local` to your hosts file
+ 1. Add `127.0.0.1 kube.local` to your hosts file
 
 ## More
 
