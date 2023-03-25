@@ -6,6 +6,8 @@ FROM --platform=$TARGETPLATFORM node:18.15.0-bullseye-slim@sha256:7d67f2765f8d1b
   as node
 
 FROM --platform=$TARGETPLATFORM base as base-node-watchexec-release
+LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
+
 COPY --from=node --link /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node --link /usr/local/bin/node /usr/local/bin/
 
