@@ -57,6 +57,31 @@ RUN set -ex; \
   rm -rf /var/lib/apt/lists/*; \
   rm -rf /var/log/apt /var/log/dpkg.log /var/log/alternatives.log /root/.gnupg;
 
+FROM --platform=$BUILDPLATFORM base-build-root as bin-stub
+RUN set -e; \
+  mkdir /app; \
+  echo '#!/bin/sh' > /app/stub; \
+  echo 'echo "Waiting for replacement at $0"' >> /app/stub; \
+  chmod a+x /app/stub;
+
+# static-watch: Watchexec image for static binary
+# Currently stub bin is a shell script so we can't run entirely distroless
+# FROM --platform=$TARGETPLATFORM gcr.io/distroless/static-debian11 as static-watch
+# Wrong/missing glibc for watchexec?
+# FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/busybox as static-watch
+# Missing sh, possibly useful with a rust stub bin
+# FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/glibc-dynamic as static-watch
+FROM --platform=$TARGETPLATFORM base-target as static-watch
+COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-stub /app/stub /app/main
+ENTRYPOINT [ "/usr/local/bin/watchexec", \
+  "--print-events", \
+  "--debounce=500", \
+  "--shell=none", \
+  "--watch=/app/main", \
+  "--", \
+  "/app/main" ]
+
 # nodejs: Base nodejs image
 FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim as nodejs
 
