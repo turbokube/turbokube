@@ -10,4 +10,4 @@ set -eo pipefail
 # Test on buildplatform
 ./imagetest/build-docker-buildx.sh
 # Build multiarch
-BUILDX_ARGS="$PLATFORM $BUOILDX_PUSH" TEST=false ./imagetest/build-docker-buildx.sh
+[ "$BUILD" = "false" ] || BUILDX_ARGS="$PLATFORM $BUOILDX_PUSH" TEST=false ./imagetest/build-docker-buildx.sh

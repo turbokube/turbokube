@@ -1,16 +1,15 @@
 # turbokube
 
-Monorepo development to Kubernetes.
+Fast, cheap and hackable devloops for containers.
 
-Turbokube solves suprisingly hard problems that developers face when approaching the container ecosystem.
-
- * Build containers locally
-
- * Container builds can have local dependencies
-
- * Test locally in a cluster
+ * Works with any container you can copy files to.
+ * No image registry required.
+ * First class monorepo support.
+ * Nothing fancy or opaque or low-level involved.
+ * Gets you started with microservices on Kubernetes.
 
 All of the above can be done without remote infrastructure.
+Turbokube provides examples of how to bootstrap local Kubernetes environments.
 
 ## Disclaimer
 
@@ -27,22 +26,45 @@ Local, transparent and composable: Turbokube facilitates experimentation and lea
 
 When ready for production, the following is clearly reviewable from an ops perspective:
 
+ * Your local build workflow can be reused to build production images.
+
+   - Thanks to having defined file sync patterns for your dev loops.
+
  * Image builds are reproducible and can be promoted to production registries.
+
+   - Thanks to local declarative builds using [contain](https://github.com/turbokube/contain).
 
  * Kubernetes resource yaml is compatible with Kustomize / `kubectl apply -k`
 
- * Dependencies are defined
+ * Dependencies are already declared, in terms of [endpoints](#endpoints).
+
+   - Again thanks to depending on them for your dev loops.
+
+   - This lets you self host - i.e. actually understand - your backends during development.
 
 ## Getting started
 
  1. Add `127.0.0.1 kube.local` to your hosts file
+
+## Endpoints
+
+When you want to take your endpoints and Kustomize bases to production,
+your Operations/SRE team will be interested in what _endpoints_ you'll depend on.
+They'll likely configure third party components differently that you've done in development.
+That doesn't matter as long as endpoints are compatible.
+Turbokube provides a declarative approach to facilitate this transition.
+In practice endpoints are kubernetes [services](https://kubernetes.io/docs/concepts/services-networking/service/) applied to the same namespaces as your application.
 
 ## More
 
  * [github org](https://github.com/turbokube)
  * [npmjs org](https://www.npmjs.com/org/turbokube)
 
-## Build base images
+## The Turborepo source
+
+The remainder of this readme concerns how to contribute to Turborepo.
+
+### Build base images
 
  - Full build: `./build.sh`
  - Example subset: `BUILD_SUBSET="^j(dk|re)17$" BUILDX_ARGS="--progress=plain" ./build.sh`

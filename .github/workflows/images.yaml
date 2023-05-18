@@ -31,11 +31,12 @@ jobs:
       name: Build and push
       uses: docker/build-push-action@v4
       with:
-        context: nodejs/watchexec
+        context: .
+        target: nodejs-watchexec
+        tags: |
+          ghcr.io/turbokube/nodejs-watchexec:latest
+          ghcr.io/turbokube/nodejs-watchexec:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: |
-          ghcr.io/turbokube/node-watchexec:latest
-          ghcr.io/turbokube/node-watchexec:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
