@@ -200,3 +200,4 @@ COPY --from=install-mandrel --link /usr/share/mandrel /usr/share/mandrel
 ENV JAVA_VERSION=jdk-17.0.7+7 \
   JAVA_HOME=/usr/share/mandrel \
   PATH=/usr/share/mandrel/bin:/usr/share/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+VOLUME ["/home/nonroot/.m2/repository"]
