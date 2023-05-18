@@ -18,14 +18,66 @@ LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /workspace
 
 # base-target:
-FROM base-target-root as base-target
+FROM --platform=$TARGETPLATFORM base-target-root as base-target
 RUN grep 'nonroot:x:65532' /etc/passwd || \
   echo 'nonroot:x:65532:65534:nonroot:/home/nonroot:/usr/sbin/nologin' >> /etc/passwd && \
   mkdir -p /home/nonroot && touch /home/nonroot/.bash_history && chown -R 65532:65534 /home/nonroot
 USER nonroot:nogroup
 
 # base-build:
-FROM base-build-root as base-build
+FROM --platform=$BUILDPLATFORM base-build-root as base-build
+RUN grep 'nonroot:x:65532' /etc/passwd || \
+  echo 'nonroot:x:65532:65534:nonroot:/home/nonroot:/usr/sbin/nologin' >> /etc/passwd && \
+  mkdir -p /home/nonroot && touch /home/nonroot/.bash_history && chown -R 65532:65534 /home/nonroot
+USER nonroot:nogroup
+
+# base-build-gcc-root: keeps build deps for use in layers that build stuff
+FROM --platform=$BUILDPLATFORM base-build-root as base-build-gcc-root
+RUN set -ex; \
+  export DEBIAN_FRONTEND=noninteractive; \
+  runDeps=' \
+    libc6 \
+  '; \
+  buildDeps=' \
+    curl ca-certificates \
+    gcc \
+    g++ \
+    libc-dev \
+    make \
+  '; \
+  apt-get update && apt-get install -y $runDeps $buildDeps --no-install-recommends; \
+  \
+  rm -rf /var/lib/apt/lists; \
+  rm -rf /var/log/dpkg.log /var/log/alternatives.log /var/log/apt /root/.gnupg
+
+# base-target-gcc-root: for use in target images that need gcc, with some specific JNI dependencies as mandrel is the most likely usage
+FROM --platform=$TARGETPLATFORM base-target-root as base-target-gcc-root
+RUN set -ex; \
+  export DEBIAN_FRONTEND=noninteractive; \
+  runDeps=' \
+    libc6 \
+    libsnappy1v5 libsnappy-jni liblz4-1 liblz4-jni libzstd1 libfreetype6 \
+    curl ca-certificates \
+    gcc \
+    g++ \
+    libc-dev \
+    make \
+    zlib1g-dev libsnappy-dev liblz4-dev libzstd-dev libfreetype6-dev \
+  '; \
+  apt-get update && apt-get install -y $runDeps $buildDeps --no-install-recommends; \
+  \
+  rm -rf /var/lib/apt/lists; \
+  rm -rf /var/log/dpkg.log /var/log/alternatives.log /var/log/apt /root/.gnupg
+
+# base-target-gcc:
+FROM --platform=$TARGETPLATFORM base-target-gcc-root as base-target-gcc
+RUN grep 'nonroot:x:65532' /etc/passwd || \
+  echo 'nonroot:x:65532:65534:nonroot:/home/nonroot:/usr/sbin/nologin' >> /etc/passwd && \
+  mkdir -p /home/nonroot && touch /home/nonroot/.bash_history && chown -R 65532:65534 /home/nonroot
+USER nonroot:nogroup
+
+# base-build-gcc:
+FROM --platform=$BUILDPLATFORM base-build-gcc-root as base-build-gcc
 RUN grep 'nonroot:x:65532' /etc/passwd || \
   echo 'nonroot:x:65532:65534:nonroot:/home/nonroot:/usr/sbin/nologin' >> /etc/passwd && \
   mkdir -p /home/nonroot && touch /home/nonroot/.bash_history && chown -R 65532:65534 /home/nonroot
@@ -105,12 +157,45 @@ COPY --chown=nonroot:nogroup nodejs/watchexec/main-wait.js main.js
 
 # jre17: Java runtime base
 FROM --platform=$TARGETPLATFORM base-target as jre17
-COPY --from=eclipse-temurin:17.0.6_10-jre /opt/java/openjdk /opt/java/openjdk
-ENV JAVA_VERSION=jdk-17.0.6+10 \
+COPY --from=eclipse-temurin:17.0.7_7-jre /opt/java/openjdk /opt/java/openjdk
+ENV JAVA_VERSION=jdk-17.0.7+7 \
   PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# jdk17: Java development base
-FROM todo
+# jre17-watch:
+FROM --platform=$TARGETPLATFORM jre17 as jre17-watch
+COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
 
-# bin-maven: Maven to
-FROM todo
+# install-mandrel:
+FROM --platform=$TARGETPLATFORM base-target-gcc as install-mandrel
+ARG TARGETARCH
+ENV MANDREL_JAVA_VERSION=java17 \
+  MANDREL_VERSION=22.3.2.1-Final \
+  JAVA_VERSION=jdk-17.0.7+7 \
+  JAVA_HOME=/home/nonroot/mandrel \
+  PATH=/home/nonroot/mandrel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RUN set -ex; \
+  ARCH=$TARGETARCH; \
+  [ "$TARGETARCH" != "arm64" ] || ARCH=aarch64; \
+  MANDREL_DIST=mandrel-$MANDREL_JAVA_VERSION-linux-$ARCH-$MANDREL_VERSION.tar.gz; \
+  MANDREL_DIST_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-$MANDREL_VERSION/$MANDREL_DIST; \
+  MANDREL_DIST_SHA256=$(curl -sLSf "$MANDREL_DIST_URL.sha256"); \
+  [ -n "$MANDREL_DIST_SHA256" ]; \
+  cd /home/nonroot; \
+  curl -o $MANDREL_DIST -sLSf $MANDREL_DIST_URL; \
+  echo "$MANDREL_DIST_SHA256" | sha256sum -c -; \
+  mkdir ./mandrel; \
+  cat $MANDREL_DIST | tar xzf - --strip-components=1 -C ./mandrel;
+RUN rm -v /home/nonroot/mandrel/lib/src.zip
+
+# jdk17-maven:
+FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-17 as jdk17-maven
+RUN mkdir -p /home/nonroot/.m2
+
+# jdk17: Java development base, geared towards Quarkus
+FROM --platform=$TARGETPLATFORM base-target-gcc as jdk17
+COPY --from=jdk17-maven --link /usr/share/maven /usr/share/maven
+COPY --from=jdk17-maven --link --chown=65532:65534 /home/nonroot/.m2 /home/nonroot/.m2
+COPY --from=install-mandrel --link /home/nonroot/mandrel /home/nonroot/mandrel
+ENV JAVA_VERSION=jdk-17.0.7+7 \
+  JAVA_HOME=/home/nonroot/mandrel \
+  PATH=/home/nonroot/mandrel/bin:/usr/share/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

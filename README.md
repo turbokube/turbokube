@@ -41,3 +41,9 @@ When ready for production, the following is clearly reviewable from an ops persp
 
  * [github org](https://github.com/turbokube)
  * [npmjs org](https://www.npmjs.com/org/turbokube)
+
+## Build base images
+
+ - Full build: `./build.sh`
+ - Example subset: `BUILD_SUBSET="^j(dk|re)17$" BUILDX_ARGS="--progress=plain" ./build.sh`
+ - Re-test an already built image: `BUILD=false BUILD_SUBSET="^jdk17$" ./build.sh`

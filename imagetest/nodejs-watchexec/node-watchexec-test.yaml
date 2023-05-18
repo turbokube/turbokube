@@ -1,0 +1,16 @@
+schemaVersion: '2.0.0'
+
+# https://github.com/GoogleContainerTools/container-structure-test/blob/v1.15.0/pkg/types/v2/command.go#L28
+commandTests:
+- name: node binary in path
+  command: node
+  args:
+  - --version
+  expectedOutput:
+  - v18\..*
+- name: watchexec binary in path
+  command: watchexec
+  args:
+  - --version
+  expectedOutput:
+  - watchexec.*
