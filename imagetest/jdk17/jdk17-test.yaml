@@ -30,4 +30,4 @@ commandTests:
   args:
   - javac
   expectedOutput:
-  - /home/nonroot/mandrel/bin/javac
+  - /usr/share/mandrel/bin/javac

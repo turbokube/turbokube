@@ -166,13 +166,13 @@ FROM --platform=$TARGETPLATFORM jre17 as jre17-watch
 COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
 
 # install-mandrel:
-FROM --platform=$TARGETPLATFORM base-target-gcc as install-mandrel
+FROM --platform=$TARGETPLATFORM base-target-gcc-root as install-mandrel
 ARG TARGETARCH
 ENV MANDREL_JAVA_VERSION=java17 \
   MANDREL_VERSION=22.3.2.1-Final \
   JAVA_VERSION=jdk-17.0.7+7 \
-  JAVA_HOME=/home/nonroot/mandrel \
-  PATH=/home/nonroot/mandrel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  JAVA_HOME=/usr/share/mandrel \
+  PATH=/usr/share/mandrel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 RUN set -ex; \
   ARCH=$TARGETARCH; \
   [ "$TARGETARCH" != "arm64" ] || ARCH=aarch64; \
@@ -180,12 +180,13 @@ RUN set -ex; \
   MANDREL_DIST_URL=https://github.com/graalvm/mandrel/releases/download/mandrel-$MANDREL_VERSION/$MANDREL_DIST; \
   MANDREL_DIST_SHA256=$(curl -sLSf "$MANDREL_DIST_URL.sha256"); \
   [ -n "$MANDREL_DIST_SHA256" ]; \
-  cd /home/nonroot; \
+  cd /usr/share; \
   curl -o $MANDREL_DIST -sLSf $MANDREL_DIST_URL; \
   echo "$MANDREL_DIST_SHA256" | sha256sum -c -; \
   mkdir ./mandrel; \
-  cat $MANDREL_DIST | tar xzf - --strip-components=1 -C ./mandrel;
-RUN rm -v /home/nonroot/mandrel/lib/src.zip
+  cat $MANDREL_DIST | tar xzf - --strip-components=1 -C ./mandrel; \
+  rm $MANDREL_DIST;
+RUN rm -v /usr/share/mandrel/lib/src.zip
 
 # jdk17-maven:
 FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-17 as jdk17-maven
@@ -195,7 +196,7 @@ RUN mkdir -p /home/nonroot/.m2
 FROM --platform=$TARGETPLATFORM base-target-gcc as jdk17
 COPY --from=jdk17-maven --link /usr/share/maven /usr/share/maven
 COPY --from=jdk17-maven --link --chown=65532:65534 /home/nonroot/.m2 /home/nonroot/.m2
-COPY --from=install-mandrel --link /home/nonroot/mandrel /home/nonroot/mandrel
+COPY --from=install-mandrel --link /usr/share/mandrel /usr/share/mandrel
 ENV JAVA_VERSION=jdk-17.0.7+7 \
-  JAVA_HOME=/home/nonroot/mandrel \
-  PATH=/home/nonroot/mandrel/bin:/usr/share/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  JAVA_HOME=/usr/share/mandrel \
+  PATH=/usr/share/mandrel/bin:/usr/share/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
