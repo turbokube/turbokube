@@ -137,8 +137,8 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 # nodejs: Base nodejs image
 FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim as nodejs
 
-# nodejs-watchexec: Quite opinionated js source/bundle watch
-FROM --platform=$TARGETPLATFORM base-target as nodejs-watchexec
+# nodejs-watch: Quite opinionated js source/bundle watch
+FROM --platform=$TARGETPLATFORM base-target as nodejs-watch
 COPY --from=nodejs --link /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=nodejs --link /usr/local/bin/node /usr/local/bin/
 COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/

@@ -67,14 +67,14 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
     -
-      name: Build and push nodejs-watchexec
+      name: Build and push nodejs-watch
       uses: docker/build-push-action@v4
       with:
         context: .
-        target: nodejs-watchexec
+        target: nodejs-watch
         tags: |
-          ghcr.io/turbokube/nodejs-watchexec:latest
-          ghcr.io/turbokube/nodejs-watchexec:${{ github.sha }}
+          ghcr.io/turbokube/nodejs-watch:latest
+          ghcr.io/turbokube/nodejs-watch:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
         push: true
         cache-from: type=gha
