@@ -1,0 +1,33 @@
+schemaVersion: '2.0.0'
+
+commandTests:
+- name: java binary in path
+  command: java
+  args:
+  - -version
+  expectedError:
+  - OpenJDK
+- name: javac binary in path
+  command: javac
+  args:
+  - -version
+  expectedOutput:
+  - javac 17
+- name: Maven in path
+  command: mvn
+  args:
+  - --version
+  expectedOutput:
+  - Apache Maven 3
+- name: GraalVM native-image in path
+  command: native-image
+  args:
+  - --version
+  expectedOutput:
+  - Mandrel
+- name: JDK is reused from GraalVM
+  command: which
+  args:
+  - javac
+  expectedOutput:
+  - /usr/share/mandrel/bin/javac

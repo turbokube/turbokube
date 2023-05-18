@@ -1,0 +1,20 @@
+schemaVersion: '2.0.0'
+
+# https://github.com/GoogleContainerTools/container-structure-test/blob/v1.15.0/pkg/types/v2/file_content.go#L27
+fileContentTests:
+- name: stub script
+  path: /app/main
+  expectedContents:
+  - '#!/bin/sh'
+
+commandTests:
+- name: stub binary present
+  command: /app/main
+  expectedOutput:
+  - Waiting for replacement at /app/main
+- name: watchexec binary
+  command: /usr/local/bin/watchexec
+  args:
+  - --version
+  expectedOutput:
+  - watchexec.*

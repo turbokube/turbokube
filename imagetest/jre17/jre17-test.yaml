@@ -1,0 +1,25 @@
+schemaVersion: '2.0.0'
+
+metadataTest:
+  envVars:
+  - key: JAVA_VERSION
+    value: &javaVersion ".*17.0.7\\+7" # anchor because version+build must match expectedOutput of -version below
+    isRegex: true
+  - key: JAVA_VERSION
+    # eclipse-temurin -jre images do have the jdk- prefix
+    value: ^jdk-.*
+    isRegex: true
+
+# https://github.com/GoogleContainerTools/container-structure-test/blob/v1.15.0/pkg/types/v2/command.go#L28
+commandTests:
+- name: java binary in path
+  command: java
+  args:
+  - -version
+  expectedError:
+  - OpenJDK
+  - *javaVersion
+- name: modified PATH still contains /usr/bin
+  command: whoami
+  expectedOutput:
+  - nonroot

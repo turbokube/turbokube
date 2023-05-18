@@ -1,0 +1,15 @@
+schemaVersion: '2.0.0'
+
+commandTests:
+- name: java binary in path
+  command: java
+  args:
+  - -version
+  expectedError:
+  - OpenJDK
+- name: watchexec in path
+  command: watchexec
+  args:
+  - --version
+  expectedOutput:
+  - watchexec

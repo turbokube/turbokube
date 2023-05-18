@@ -28,14 +28,67 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
     -
-      name: Build and push
+      name: Build and push jdk17
       uses: docker/build-push-action@v4
       with:
-        context: nodejs/watchexec
+        context: .
+        target: jdk17
+        tags: |
+          ghcr.io/turbokube/jdk17:latest
+          ghcr.io/turbokube/jdk17:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
         push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    -
+      name: Build and push jre17
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        target: jre17
         tags: |
-          ghcr.io/turbokube/node-watchexec:latest
-          ghcr.io/turbokube/node-watchexec:${{ github.sha }}
+          ghcr.io/turbokube/jre17:latest
+          ghcr.io/turbokube/jre17:${{ github.sha }}
+        platforms: linux/amd64,linux/arm64
+        push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    -
+      name: Build and push jre17-watch
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        target: jre17-watch
+        tags: |
+          ghcr.io/turbokube/jre17-watch:latest
+          ghcr.io/turbokube/jre17-watch:${{ github.sha }}
+        platforms: linux/amd64,linux/arm64
+        push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    -
+      name: Build and push nodejs-watchexec
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        target: nodejs-watchexec
+        tags: |
+          ghcr.io/turbokube/nodejs-watchexec:latest
+          ghcr.io/turbokube/nodejs-watchexec:${{ github.sha }}
+        platforms: linux/amd64,linux/arm64
+        push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    -
+      name: Build and push static-watch
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        target: static-watch
+        tags: |
+          ghcr.io/turbokube/static-watch:latest
+          ghcr.io/turbokube/static-watch:${{ github.sha }}
+        platforms: linux/amd64,linux/arm64
+        push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
