@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@tsconfig/node20": "1.0.1",
+    "@types/node": "^18",
     "@yarnpkg/sdks": "3.0.0-rc.44",
     "typescript": "5.1.1-rc"
   }

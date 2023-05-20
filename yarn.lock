@@ -317,6 +317,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^18":
+  version: 18.16.13
+  resolution: "@types/node@npm:18.16.13"
+  checksum: 85fd505ba622e86edd359209367aa927e558fa46f4ebe874d689c573fa1b2a0f78da9d8f1a49b3bd84ae25a3ed189425b3cec1385bc75436e02309c698da1340
+  languageName: node
+  linkType: hard
+
 "@types/responselike@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/responselike@npm:1.0.0"
@@ -2335,6 +2342,7 @@ __metadata:
   resolution: "turbokube@workspace:."
   dependencies:
     "@tsconfig/node20": "npm:1.0.1"
+    "@types/node": "npm:^18"
     "@yarnpkg/sdks": "npm:3.0.0-rc.44"
     typescript: "npm:5.1.1-rc"
   languageName: unknown
