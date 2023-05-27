@@ -1,4 +1,7 @@
-import { SpawnWaitStdout } from "../spawnwait"
+import { PathLike } from "fs";
+import { FileHandle } from "fs/promises";
+import { Buffer } from "buffer";
+import { SpawnWaitStdout } from "../spawnwait";
 
 export interface StartOptions {
 
@@ -8,9 +11,15 @@ export interface StartOptions {
 
 export interface UploadOptions {
 
-  pathLocal: string
+  /**
+   * Buffer to upload content, string to upload a local file
+   */
+  local: Buffer | string
 
-  pathInContainer: string
+  /**
+   * Destination path in container, no trailing slash
+   */
+  containerPath: string
 
 }
 

@@ -1,6 +1,9 @@
 // @ts-check
 
+import { realpath, stat } from 'node:fs/promises';
+
 // VSCode did not pick up the workspace dependency
+// (actually it doesn't pick up any npm dependency)
 // import spawnwait from '@turbokube/spawnwait';
 import spawnwait from '../spawnwait/spawnwait';
 
@@ -68,7 +71,26 @@ class ContainerDockerCLI {
    * @param {import('./Testcontainers').UploadOptions} options
    */
   async uploadFile(options) {
-
+    if (!/^(\/[^/]+)+/.test(options.containerPath)) {
+      throw new Error(`unsupported containerPath ${options.containerPath}`);
+    }
+    if (Buffer.isBuffer(options.local)) {
+      // we can use stdin for this with the arg -
+      throw new Error('text body upload is not implemented');
+    }
+    const path = await realpath(options.local);
+    const s = await stat(path);
+    if (s.isDirectory()) {
+      throw new Error('folder upload is not implemented');
+    }
+    if (!s.isFile()) {
+      throw new Error(`unexpected local ${path}: ${s}`);
+    }
+    const args = ['cp'];
+    args.push(path);
+    args.push(`${this.id}:${options.containerPath}`);
+    const cp = await spawnwait(this.options.command, args);
+    if (cp.status !== 0) throw new Error(`cp stats ${cp.status}; ${cp.error}`);
   }
 
   /**

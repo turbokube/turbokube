@@ -30,4 +30,9 @@ export interface SpawnWait extends SpawnWaitStdout {
 
   stderr?: RegExp
 
+  /**
+   * True to pass through stdout and stderr
+   */
+  passhthrough?: true
+
 }

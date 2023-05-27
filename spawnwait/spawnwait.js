@@ -27,16 +27,16 @@ class SpawnWaitTimeout extends Error {
 }
 
 /**
- * We like the return value from
- * https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options
- * but want to use await.
+ * Like https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options
+ * but supports await and custom termination criterias.
+ *
  * @param {string} command
  * @param {string[]} args
  * @param {import('.').SpawnWait} wait
  * @returns {Promise<import('node:child_process').SpawnSyncReturns<string>>}
  * @throws {SpawnWaitTimeout} if a timeout occurs based on wait.timeout
  */
-export default async function sh(command, args, wait = {}) {
+export default async function spawnwait(command, args, wait = {}) {
   return new Promise((resolve, reject) => {
     const p = spawn(command, args, OPTIONS);
     /** @type {import('node:child_process').SpawnSyncReturns<string>} */
@@ -87,17 +87,13 @@ export default async function sh(command, args, wait = {}) {
     }
     p.stdout.on('data', (data) => {
       result.stdout += data.toString();
-      if (wait.stdout && wait.stdout.test(result.stdout)) {
-        waitdone();
-      }
-      process.stdout.write(data);
+      if (wait.stdout && wait.stdout.test(result.stdout)) waitdone();
+      if (wait.passhthrough) process.stdout.write(data);
     });
     p.stderr.on('data', (data) => {
       result.stderr += data.toString();
-      if (wait.stderr && wait.stderr.test(result.stdout)) {
-        waitdone();
-      }
-      process.stderr.write(data);
+      if (wait.stderr && wait.stderr.test(result.stderr)) waitdone();
+      if (wait.passhthrough) process.stderr.write(data);
     });
     p.on('exit', (exitCode, signalCode) => {
       result.status = exitCode;
