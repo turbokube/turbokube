@@ -259,6 +259,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@turbokube/spawnwait@workspace:*, @turbokube/spawnwait@workspace:spawnwait":
+  version: 0.0.0-use.local
+  resolution: "@turbokube/spawnwait@workspace:spawnwait"
+  languageName: unknown
+  linkType: soft
+
 "@types/cacheable-request@npm:^6.0.1":
   version: 6.0.3
   resolution: "@types/cacheable-request@npm:6.0.3"
@@ -2333,6 +2339,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "turbokube-examples@workspace:examples"
   dependencies:
+    "@turbokube/spawnwait": "workspace:*"
     vitest: "npm:0.31.1"
   languageName: unknown
   linkType: soft

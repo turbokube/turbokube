@@ -19,11 +19,12 @@
   "type": "module",
   "packageManager": "yarn@4.0.0-rc.44",
   "workspaces": [
-    "examples"
+    "examples",
+    "spawnwait"
   ],
   "scripts": {
     "refresh": "yarn install",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo Workspace root has not tests",
     "vscode": "yarn sdks vscode"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+import { SpawnWaitStdout } from "../spawnwait"
 
 export interface StartOptions {
 
@@ -17,6 +18,8 @@ export interface Container {
 
   async uploadFile(options: UploadOptions): void
 
-  async logs(): string
+  async logs(wait?: SpawnWaitStdout): Promise<string>
+
+  async stop(): Promise<void>
 
 }
