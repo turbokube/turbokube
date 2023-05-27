@@ -185,7 +185,14 @@ export default class ImageTestRuntime {
     if (!/^[a-z]+-[a-z+]/.test(image)) {
       throw new Error(`Unexpected test image name: ${image}`);
     }
-    const tag = 'latest';
+    // TODO find a way to test locally built images
+    // TODO also if pull is required tests will typically time out
+    const currentMain = await spawnwait('git', [
+      'rev-parse',
+      'origin/main', // what we build with github actions
+    ]);
+    if (currentMain.status !== 0) throw new Error('failed to get current main ref: ' + currentMain.error);
+    const tag = currentMain.stdout.trim();
     return `ghcr.io/turbokube/${image}:${tag}`;
   }
 
