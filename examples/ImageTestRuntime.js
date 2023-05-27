@@ -144,7 +144,6 @@ export default class ImageTestRuntime {
    * @param {ContainerRuntimeOptions} options
    */
   constructor(options) {
-
   }
 
   /**
@@ -154,6 +153,18 @@ export default class ImageTestRuntime {
     const dockerCommand = await spawnwait('command', ['-v', this.docker.command]);
     if (dockerCommand.status !== 0) throw new Error(`Failed to find docker CLI: ${dockerCommand.stderr}`)
     this.docker.command = dockerCommand.stdout.trim();
+  }
+
+  /**
+   * @param {string} image
+   * @returns {Promise<string>}
+   */
+  async getTestImage(image) {
+    if (!/^[a-z]+-[a-z+]/.test(image)) {
+      throw new Error(`Unexpected test image name: ${image}`);
+    }
+    const tag = 'latest';
+    return `ghcr.io/turbokube/${image}:${tag}`;
   }
 
   /**

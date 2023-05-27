@@ -6,8 +6,12 @@ describe("nodejs-source", () => {
   /** @type {ImageTestRuntime} */
   let runtime;
 
+  /** @type {string} */
+  let image;
+
   beforeAll(async () => {
     runtime = await ImageTestRuntime.getInstance({});
+    image = await runtime.getTestImage('nodejs-watch');
   });
 
   afterAll(async () => {
@@ -20,14 +24,11 @@ describe("nodejs-source", () => {
 
     it("starts with a default watch", async () => {
       expect(runtime).toBeTruthy();
-      container = await runtime.start({
-        image: 'ghcr.io/turbokube/nodejs-watch'
-      });
+      container = await runtime.start({ image });
       const logs1 = await container.logs({
         stdout: /waiting for replacement at \/app\/main.js/,
         timeout: 100,
       });
-      console.log('logs1', logs1);
     });
 
     it("picks up changes to main", async () => {
