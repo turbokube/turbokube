@@ -1,3 +1,5 @@
+# syntax=docker.io/docker/dockerfile:1.5.2
+
 # Welcome to the source of _all_ turbokube published container images
 # Using a monodockerfile to reduce the need for scripting around builds
 # and still support arbitrary DAG based builders
@@ -85,6 +87,7 @@ USER nonroot:nogroup
 
 # bin-watchexec: /usr/local/bin/watchexec from github.com/watchexec/watchexec
 FROM --platform=$TARGETPLATFORM base-build-root as bin-watchexec
+ARG TARGETARCH
 ARG watchexecVersion=1.22.2
 RUN set -ex; \
   export DEBIAN_FRONTEND=noninteractive; \
@@ -98,11 +101,14 @@ RUN set -ex; \
   apt-get update && apt-get install -y $runDeps $buildDeps --no-install-recommends; \
   \
   mkdir /opt/watchexec; cd /opt/watchexec; \
-  export arch=$(uname -m); \
+  arch=$TARGETARCH; \
+  [ "$arch" != "arm64" ] || arch=aarch64; \
+  [ "$arch" != "amd64" ] || arch=x86_64; \
   curl -o watchexec.tar.xz -sLSf \
      "https://github.com/watchexec/watchexec/releases/download/v${watchexecVersion}/watchexec-${watchexecVersion}-$arch-unknown-linux-gnu.tar.xz"; \
   tar -xvJf watchexec.tar.xz --strip-components=1; \
   mv watchexec /usr/local/bin/watchexec; \
+  # was used to debug uname -m surprises: echo "version=${watchexecVersion} arch=${arch} TARGETARCH=${TARGETARCH}" > /usr/local/bin/watchexec.info; \
   rm -r /opt/watchexec; \
   \
   [ -z "$buildDeps" ] || apt-get purge -y --auto-remove $buildDeps; \
@@ -124,7 +130,7 @@ RUN set -e; \
 # Missing sh, possibly useful with a rust stub bin
 # FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/glibc-dynamic as static-watch
 FROM --platform=$TARGETPLATFORM base-target as static-watch
-COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
 COPY --from=bin-stub /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
@@ -141,7 +147,7 @@ FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim as nodejs
 FROM --platform=$TARGETPLATFORM base-target as nodejs-watch
 COPY --from=nodejs --link /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=nodejs --link /usr/local/bin/node /usr/local/bin/
-COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec* /usr/local/bin/
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
   "--debounce=500", \
@@ -163,7 +169,7 @@ ENV JAVA_VERSION=jdk-17.0.7+7 \
 
 # jre17-watch:
 FROM --platform=$TARGETPLATFORM jre17 as jre17-watch
-COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
 
 # install-mandrel:
 FROM --platform=$TARGETPLATFORM base-target-gcc-root as install-mandrel

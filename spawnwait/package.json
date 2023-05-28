@@ -1,0 +1,5 @@
+{
+  "name": "@turbokube/spawnwait",
+  "type": "module",
+  "main": "./spawnwait.js"
+}

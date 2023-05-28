@@ -1,0 +1,10 @@
+{
+  "name": "turbokube-examples",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@turbokube/spawnwait": "workspace:*",
+    "vitest": "0.31.1"
+  }
+}

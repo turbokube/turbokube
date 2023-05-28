@@ -60,12 +60,15 @@ In practice endpoints are kubernetes [services](https://kubernetes.io/docs/conce
  * [github org](https://github.com/turbokube)
  * [npmjs org](https://www.npmjs.com/org/turbokube)
 
-## The Turborepo source
+## The Turbokube source
 
-The remainder of this readme concerns how to contribute to Turborepo.
+The remainder of this readme concerns how to contribute to Turbokube.
 
 ### Build base images
 
  - Full build: `./build.sh`
  - Example subset: `BUILD_SUBSET="^j(dk|re)17$" BUILDX_ARGS="--progress=plain" ./build.sh`
  - Re-test an already built image: `BUILD=false BUILD_SUBSET="^jdk17$" ./build.sh`
+ - Run tests for each platform (assuming proper emulation): `TEST_PLATFORMS=all ./build.sh`
+
+Note that the unresolved issue [ERROR: (*service).Write failed](https://github.com/moby/buildkit/issues/3027) sometimes affect these builds. Retrying might help.
