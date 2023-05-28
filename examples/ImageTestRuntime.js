@@ -46,7 +46,9 @@ class ContainerDockerCLI {
   async run({
     image
   }) {
-    this.name = 'turbokube_examples_' + new Date().toISOString().replaceAll(/[^0-9]+/g,'');
+    const time = new Date().toISOString().replaceAll(/[^0-9]+/g,'');
+    const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+    this.name = `turbokube_examples_${time}_${random}`;
     const run = await spawnwait(this.options.command, [
       'run',
       '--name',

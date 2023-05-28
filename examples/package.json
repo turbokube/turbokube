@@ -1,7 +1,7 @@
 {
   "name": "turbokube-examples",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run --single-thread"
   },
   "devDependencies": {
     "@turbokube/spawnwait": "workspace:*",
