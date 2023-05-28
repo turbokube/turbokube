@@ -85,6 +85,7 @@ USER nonroot:nogroup
 
 # bin-watchexec: /usr/local/bin/watchexec from github.com/watchexec/watchexec
 FROM --platform=$TARGETPLATFORM base-build-root as bin-watchexec
+ARG TARGETARCH
 ARG watchexecVersion=1.22.2
 RUN set -ex; \
   export DEBIAN_FRONTEND=noninteractive; \
@@ -98,11 +99,14 @@ RUN set -ex; \
   apt-get update && apt-get install -y $runDeps $buildDeps --no-install-recommends; \
   \
   mkdir /opt/watchexec; cd /opt/watchexec; \
-  export arch=$(uname -m); \
+  arch=$TARGETARCH; \
+  [ "$arch" != "arm64" ] || arch=aarch64; \
+  [ "$arch" != "amd64" ] || arch=x86_64; \
   curl -o watchexec.tar.xz -sLSf \
      "https://github.com/watchexec/watchexec/releases/download/v${watchexecVersion}/watchexec-${watchexecVersion}-$arch-unknown-linux-gnu.tar.xz"; \
   tar -xvJf watchexec.tar.xz --strip-components=1; \
   mv watchexec /usr/local/bin/watchexec; \
+  # was used to debug uname -m surprises: echo "version=${watchexecVersion} arch=${arch} TARGETARCH=${TARGETARCH}" > /usr/local/bin/watchexec.info; \
   rm -r /opt/watchexec; \
   \
   [ -z "$buildDeps" ] || apt-get purge -y --auto-remove $buildDeps; \
