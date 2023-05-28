@@ -70,6 +70,22 @@ class ContainerDockerCLI {
   };
 
   /**
+   * @param {string} command
+   * @param {Array<string>} [args]
+   * @returns {Promise<import('node:child_process').SpawnSyncReturns<string>>}
+   *   from the container runtime, i.e. not the actual result of the command
+   */
+  async exec(command, args = []) {
+    const exec = [
+      'exec',
+      this.id,
+      command,
+      ...args,
+    ];
+    return await spawnwait(this.options.command, exec);
+  }
+
+  /**
    * @param {import('./Testcontainers').UploadOptions} options
    */
   async uploadFile(options) {
