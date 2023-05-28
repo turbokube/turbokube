@@ -1,5 +1,12 @@
 schemaVersion: '2.0.0'
 
+fileExistenceTests:
+- name: stub main
+  path: /app/main
+  uid: 65532
+  gid: 65534
+  permissions: -rwxrwxr--
+
 # https://github.com/GoogleContainerTools/container-structure-test/blob/v1.15.0/pkg/types/v2/file_content.go#L27
 fileContentTests:
 - name: stub script

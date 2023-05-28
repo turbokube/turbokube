@@ -120,7 +120,7 @@ RUN set -e; \
   mkdir /app; \
   echo '#!/bin/sh' > /app/stub; \
   echo 'echo "Waiting for replacement at $0"' >> /app/stub; \
-  chmod a+x /app/stub;
+  chmod 774 /app/stub;
 
 # static-watch: Watchexec image for static binary
 # Currently stub bin is a shell script so we can't run entirely distroless
@@ -131,7 +131,7 @@ RUN set -e; \
 # FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/glibc-dynamic as static-watch
 FROM --platform=$TARGETPLATFORM base-target as static-watch
 COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
-COPY --from=bin-stub /app/stub /app/main
+COPY --from=bin-stub --link --chown=65532:65534 /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
   "--debounce=500", \
