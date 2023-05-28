@@ -1,3 +1,5 @@
+# syntax=docker.io/docker/dockerfile:1.5.2
+
 # Welcome to the source of _all_ turbokube published container images
 # Using a monodockerfile to reduce the need for scripting around builds
 # and still support arbitrary DAG based builders
@@ -128,7 +130,7 @@ RUN set -e; \
 # Missing sh, possibly useful with a rust stub bin
 # FROM --platform=$TARGETPLATFORM cgr.dev/chainguard/glibc-dynamic as static-watch
 FROM --platform=$TARGETPLATFORM base-target as static-watch
-COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
 COPY --from=bin-stub /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
@@ -145,7 +147,7 @@ FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim as nodejs
 FROM --platform=$TARGETPLATFORM base-target as nodejs-watch
 COPY --from=nodejs --link /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=nodejs --link /usr/local/bin/node /usr/local/bin/
-COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec* /usr/local/bin/
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
   "--debounce=500", \
@@ -167,7 +169,7 @@ ENV JAVA_VERSION=jdk-17.0.7+7 \
 
 # jre17-watch:
 FROM --platform=$TARGETPLATFORM jre17 as jre17-watch
-COPY --from=bin-watchexec --link /usr/local/bin/watchexec /usr/local/bin/
+COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
 
 # install-mandrel:
 FROM --platform=$TARGETPLATFORM base-target-gcc-root as install-mandrel
