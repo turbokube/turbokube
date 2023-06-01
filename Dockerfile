@@ -135,8 +135,7 @@ COPY --from=bin-stub --link --chown=65532:65534 /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
   "--shell=none", \
-  "--debounce=500", \
-  "--delay-run=2", \
+  "--debounce=2000", \
   "--restart", \
   "--stop-timeout=5", \
   "--watch=/app/main", \

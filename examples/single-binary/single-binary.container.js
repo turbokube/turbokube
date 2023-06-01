@@ -27,9 +27,7 @@ describe("static-watch with single binary", () => {
       container = await runtime.start({ image });
       await container.logs({
         stdout: /Waiting for replacement at \/app\/main/,
-        // timeout: 100,
-        // TODO the --delay-run=2 flag also applies to the first start, maybe increased debounce is better?
-        timeout: 2100,
+        timeout: 100,
       });
     });
 
