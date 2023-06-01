@@ -119,7 +119,7 @@ FROM --platform=$BUILDPLATFORM base-build-root as bin-stub
 RUN set -e; \
   mkdir /app; \
   echo '#!/bin/sh' > /app/stub; \
-  echo 'echo "Waiting for replacement at $0"' >> /app/stub; \
+  echo 'while true; do echo "Waiting for replacement at $0" && sleep 3; done' >> /app/stub; \
   chmod 774 /app/stub;
 
 # static-watch: Watchexec image for static binary
@@ -134,8 +134,11 @@ COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local
 COPY --from=bin-stub --link --chown=65532:65534 /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
-  "--debounce=500", \
   "--shell=none", \
+  "--debounce=500", \
+  "--delay-run=2", \
+  "--restart", \
+  "--stop-timeout=5", \
   "--watch=/app/main", \
   "--", \
   "/app/main" ]
