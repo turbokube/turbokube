@@ -1,7 +1,7 @@
 
 import ImageTestRuntime from '../ImageTestRuntime';
 
-describe("nodejs-source", () => {
+describe("static-watch with single binary", () => {
 
   /** @type {ImageTestRuntime} */
   let runtime;
@@ -27,7 +27,9 @@ describe("nodejs-source", () => {
       container = await runtime.start({ image });
       await container.logs({
         stdout: /Waiting for replacement at \/app\/main/,
-        timeout: 100,
+        // timeout: 100,
+        // TODO the --delay-run=2 flag also applies to the first start, maybe increased debounce is better?
+        timeout: 2100,
       });
     });
 
@@ -39,14 +41,40 @@ describe("nodejs-source", () => {
     it("picks up changes to main", async () => {
       // we use a shell script instead of a binary so the test can be platform independent
       await container.uploadFile({
-        local: 'static-build/testmain2.sh',
+        local: 'single-binary/testmain-exit.sh',
         containerPath: '/app/main',
       });
       // make sure the file is copied as executable
       const stat = await container.exec('stat', ['/app/main']);
       expect(stat.stdout).toMatch(/-rwxr[w-]xr[w-]x/);
       await container.logs({
-        stdout: /in testmain2 at \/app\/main/,
+        stdout: /in testmain-exit at \/app\/main/,
+        timeout: 1000,
+      });
+    });
+
+    it("continues to pick up changes after main has exited", async () => {
+      await container.uploadFile({
+        local: 'single-binary/testmain-running.sh',
+        containerPath: '/app/main',
+      });
+      await container.logs({
+        stdout: /Wait 1 for replacement/,
+        timeout: 1000,
+      });
+      await container.logs({
+        stdout: /Wait 2 for replacement/,
+        timeout: 300,
+      });
+    });
+
+    it("continues to pick up changes after main has exited", async () => {
+      await container.uploadFile({
+        local: 'single-binary/testmain-anotherexit.sh',
+        containerPath: '/app/main',
+      });
+      await container.logs({
+        stdout: /In testmain-anotherexit at/,
         timeout: 1000,
       });
     });
