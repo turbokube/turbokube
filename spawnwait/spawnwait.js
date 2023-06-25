@@ -7,6 +7,8 @@ import { spawn } from "node:child_process";
  */
 const KILL_DEFAULT = 'SIGTERM';
 
+const DEBUG = /\bspawnwait\b/.test(process.env.DEBUG || '');
+
 /**
  * @type {import('node:child_process').SpawnOptionsWithoutStdio}
  */
@@ -38,6 +40,7 @@ class SpawnWaitTimeout extends Error {
  */
 export default async function spawnwait(command, args, wait = {}) {
   return new Promise((resolve, reject) => {
+    DEBUG && console.debug('spawnwait:', command, args.join(' '));
     const p = spawn(command, args, OPTIONS);
     /** @type {import('node:child_process').SpawnSyncReturns<string>} */
     const result = {
