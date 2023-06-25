@@ -37,14 +37,21 @@ for TARGET in $TARGETS; do
   }
   NAME=ghcr.io/turbokube/$TARGET
   OCI=imagetest/builds/$TARGET
+  OUTPUT="type=oci,name=$NAME,dest=$OCI,tar=false,compression=uncompressed,buildinfo-attrs=true"
+  TESTFROM="--image-from-oci-layout $OCI"
+  echo "$BUILDX_ARGS" | grep "platform=[^[:space:]]\+,[^[:space:]]\+" || {
+    # With single platform we can load directly to docker so that examples can run the latest build
+    [ -n "$DEVTAG" ] || DEVTAG=dev
+    OUTPUT="type=docker,name=$NAME:$DEVTAG"
+    TESTFROM="--image $NAME:$DEVTAG"
+  }
   [ "$BUILD" = "false" ] || {
     echo "=> Building $TARGET ..."
-    docker buildx build $BUILDX_ARGS --target=$TARGET --output \
-      type=oci,name=$NAME,dest=$OCI,tar=false,compression=uncompressed,buildinfo-attrs=true .
+    docker buildx build $BUILDX_ARGS --target=$TARGET --output $OUTPUT .
   }
   [ "$TEST" = "false" ] || {
     echo "=> container-structure-test $TARGET ..."
-    container-structure-test test --image-from-oci-layout $OCI -c imagetest/$TARGET/*.yaml \
+    container-structure-test test $TESTFROM -c imagetest/$TARGET/*.yaml \
       && PASSED="$PASSED $TARGET" \
       || FAILED="$FAILED $TARGET"
   }
