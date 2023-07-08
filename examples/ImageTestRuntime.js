@@ -7,6 +7,8 @@ import { realpath, stat } from 'node:fs/promises';
 // import spawnwait from '@turbokube/spawnwait';
 import spawnwait from '../spawnwait/spawnwait';
 
+const DEBUGLOGS = /\blogs\b/.test(process.env.DEBUG || '');
+
 /**
  * @typedef {object} ContainerRuntimeOptions
  * @typedef {import('./Testcontainers').Container} Container
@@ -174,7 +176,13 @@ export default class ImageTestRuntime {
     /** @type {Array<Promise<any>>} */
     const stopping = [];
     ImageTestRuntime._started.forEach(container => {
-      stopping.push(container.stop());
+      if (!DEBUGLOGS) {
+        return stopping.push(container.stop());
+      }
+      stopping.push(container.logs().then(logs => {
+        console.debug('Container logs:\n' + logs);
+        return container.stop();
+      }));
     });
     ImageTestRuntime._started = [];
     await Promise.all(stopping);
@@ -203,15 +211,15 @@ export default class ImageTestRuntime {
     if (!/^[a-z]+-[a-z+]/.test(image)) {
       throw new Error(`Unexpected test image name: ${image}`);
     }
-    // TODO find a way to test locally built images
-    // TODO also if pull is required tests will typically time out
-    const currentMain = await spawnwait('git', [
-      'rev-parse',
-      'origin/main', // what we build with github actions
+    const devimage = `ghcr.io/turbokube/${image}:dev`;
+    const inspect = await spawnwait(this.docker.command, [
+      'inspect',
+      devimage,
     ]);
-    if (currentMain.status !== 0) throw new Error('failed to get current main ref: ' + currentMain.error);
-    const tag = currentMain.stdout.trim();
-    return `ghcr.io/turbokube/${image}:${tag}`;
+    const imageinfo = JSON.parse(inspect.stdout)[0];
+    if (!imageinfo.Id) throw new Error(`Inspect failed for image ${devimage}: ${inspect.stdout}`);
+    console.log('image id', imageinfo.Id);
+    return devimage;
   }
 
   /**

@@ -10,12 +10,14 @@
 FROM scratch as todo
 
 # base-target-root:
-FROM --platform=$TARGETPLATFORM ubuntu:23.04 as base-target-root
+FROM --platform=$TARGETPLATFORM ubuntu:23.04@sha256:b5d5cddaeb8d2f150660cf8f9a1203dd450ac765e6c07630176ac6486eceaddb \
+  as base-target-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /app
 
 # base-build-root:
-FROM --platform=$BUILDPLATFORM ubuntu:23.04 as base-build-root
+FROM --platform=$BUILDPLATFORM ubuntu:23.04@sha256:b5d5cddaeb8d2f150660cf8f9a1203dd450ac765e6c07630176ac6486eceaddb \
+  as base-build-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /workspace
 
@@ -134,17 +136,17 @@ COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local
 COPY --from=bin-stub --link --chown=65532:65534 /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
-  "--shell=none", \
   "--debounce=500", \
-  "--delay-run=2", \
   "--restart", \
-  "--stop-timeout=5", \
-  "--watch=/app/main", \
-  "--", \
-  "/app/main" ]
+  "--stop-timeout=25", \
+  "--shell=none", \
+  "--watch=/app", \
+  "--" ]
+CMD [ "/app/main" ]
 
 # nodejs: Base nodejs image
-FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim as nodejs
+FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim@sha256:1ba1ddfc61b385b6436fd0fa0d1d42d322a0cd03c1ff110fa39e828511152aef \
+  as nodejs
 
 # nodejs-watch: Quite opinionated js source/bundle watch
 FROM --platform=$TARGETPLATFORM base-target as nodejs-watch
@@ -198,7 +200,8 @@ RUN set -ex; \
 RUN rm -v /usr/share/mandrel/lib/src.zip
 
 # jdk17-maven:
-FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-17 as jdk17-maven
+FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-17@sha256:3e470e0db4a6a22ba7b5a7a2e77a8cfd14cbfdc4e8bcfdde6fff536030a3f678 \
+  as jdk17-maven
 RUN mkdir -p /home/nonroot/.m2
 
 # jdk17: Java development base, geared towards Quarkus

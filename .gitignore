@@ -1,3 +1,5 @@
 *.tgz
 .yarn
 .pnp.*
+node_modules
+.turbo

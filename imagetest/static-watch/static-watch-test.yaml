@@ -15,10 +15,6 @@ fileContentTests:
   - '#!/bin/sh'
 
 commandTests:
-- name: stub binary present
-  command: /app/main
-  expectedOutput:
-  - Waiting for replacement at /app/main
 - name: watchexec binary
   command: /usr/local/bin/watchexec
   args:

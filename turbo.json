@@ -1,0 +1,17 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "inputs": [
+        "package.json",
+        "../Dockerfile",
+        "../.dockerignore"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "build"
+      ]
+    }
+  }
+}
