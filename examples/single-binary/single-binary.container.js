@@ -60,22 +60,22 @@ describe("static-watch with single binary", () => {
         containerPath: '/app/main',
       });
       await container.logs({
-        stdout: /Wait 1 for replacement/,
+        stdout: /testmain-running wait 1 for replacement at \/app\/main/i,
         timeout: 1000,
       });
       await container.logs({
-        stdout: /Wait 2 for replacement/,
+        stdout: /testmain-running wait 2 for replacement at \/app\/main/i,
         timeout: 300,
       });
     });
 
-    it("continues to pick up changes after main has exited", async () => {
+    it("continues to pick up changes after exit + still running", async () => {
       await container.uploadFile({
         local: 'single-binary/testmain-anotherexit.sh',
         containerPath: '/app/main',
       });
       await container.logs({
-        stdout: /In testmain-anotherexit at/,
+        stdout: /in testmain-anotherexit at \/app\/main/i,
         timeout: 1000,
       });
     });

@@ -1,2 +1,2 @@
 #!/bin/sh
-echo "In testmain-anotherexit at $0"
+echo "in testmain-anotherexit at $0"

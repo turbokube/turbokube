@@ -1,2 +1,2 @@
 #!/bin/sh
-echo "In testmain-exit at $0"
+echo "in testmain-exit at $0"

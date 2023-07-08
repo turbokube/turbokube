@@ -136,13 +136,13 @@ COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local
 COPY --from=bin-stub --link --chown=65532:65534 /app/stub /app/main
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
-  "--shell=none", \
-  "--debounce=2000", \
+  "--debounce=500", \
   "--restart", \
-  "--stop-timeout=5", \
-  "--watch=/app/main", \
-  "--", \
-  "/app/main" ]
+  "--stop-timeout=25", \
+  "--shell=none", \
+  "--watch=/app", \
+  "--" ]
+CMD [ "/app/main" ]
 
 # nodejs: Base nodejs image
 FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim@sha256:1ba1ddfc61b385b6436fd0fa0d1d42d322a0cd03c1ff110fa39e828511152aef \
