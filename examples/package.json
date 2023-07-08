@@ -1,7 +1,12 @@
 {
   "name": "turbokube-examples",
   "scripts": {
-    "test": "vitest run --single-thread"
+    "docker:load": "echo $TURBO_HASH",
+    "build:images": "cd ../ && TEST=false ./build.sh",
+    "build": "yarn run build:images",
+    "test:images": "cd ../ && BUILD=false ./build.sh",
+    "test:integration": "vitest run --single-thread",
+    "test": "yarn run test:images && yarn run test:integration"
   },
   "devDependencies": {
     "@turbokube/spawnwait": "workspace:*",
