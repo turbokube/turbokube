@@ -80,6 +80,27 @@ describe("static-watch with single binary", () => {
       });
     });
 
+    // This test hasn't been confirmed to be effective
+    // Also note that the entrypoint's stop-timeout value might be longer than test timeouts
+    it("handles programs that ignore signals", async () => {
+      await container.uploadFile({
+        local: 'single-binary/testmain-nosigterm.sh',
+        containerPath: '/app/main',
+      });
+      await container.logs({
+        stdout: /testmain-nosigterm wait 1 for replacement at \/app\/main, ignoring SIGTERM/i,
+        timeout: 1000,
+      });
+      await container.uploadFile({
+        local: 'single-binary/testmain-exit.sh',
+        containerPath: '/app/main',
+      });
+      await container.logs({
+        stdout: /in testmain-exit at \/app\/main/i,
+        timeout: 1000,
+      });
+    });
+
   });
 
 });
