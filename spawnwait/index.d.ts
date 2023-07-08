@@ -7,9 +7,11 @@ export class SpawnWaitTimeout extends Error {
 
 }
 
-export interface SpawnWaitStdout {
+export interface SpawnWaitForOutput {
 
   stdout?: RegExp
+
+  stderr?: RegExp
 
   /**
    * Milliseconds to wait before giving up.
@@ -26,9 +28,7 @@ export interface SpawnWaitStdout {
 
 }
 
-export interface SpawnWait extends SpawnWaitStdout {
-
-  stderr?: RegExp
+export interface SpawnWait extends SpawnWaitForOutput {
 
   /**
    * True to pass through stdout and stderr

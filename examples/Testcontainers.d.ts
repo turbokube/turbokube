@@ -1,7 +1,7 @@
 import { PathLike } from "fs";
 import { FileHandle } from "fs/promises";
 import { Buffer } from "buffer";
-import { SpawnWaitStdout } from "../spawnwait";
+import { SpawnWaitForOutput } from "../spawnwait";
 
 export interface StartOptions {
 
@@ -27,7 +27,7 @@ export interface Container {
 
   async uploadFile(options: UploadOptions): void
 
-  async logs(wait?: SpawnWaitStdout): Promise<string>
+  async logs(wait?: SpawnWaitForOutput): Promise<string>
 
   async stop(): Promise<void>
 

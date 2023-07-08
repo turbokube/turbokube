@@ -115,12 +115,12 @@ class ContainerDockerCLI {
 
   /**
    * @returns {Promise<string>}
-   * @param {import('../spawnwait/index').SpawnWaitStdout} [wait]
+   * @param {import('../spawnwait/index').SpawnWaitForOutput} [wait]
    * @param {number} [tail]
    */
   async logs(wait, tail) {
     const args = ['logs'];
-    if (wait && wait.stdout) args.push('--follow');
+    if (wait?.stdout || wait?.stderr) args.push('--follow');
     if (tail !== undefined) {
       if (!Number.isInteger(tail)) throw new Error(`tail must be integer, got: ${tail}`);
       args.push('--tail', tail.toString());
