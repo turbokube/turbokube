@@ -1,5 +1,8 @@
 {
   "name": "@turbokube/spawnwait",
   "type": "module",
-  "main": "./spawnwait.js"
+  "main": "./spawnwait.js",
+  "scripts": {
+    "build": "echo $TURBO_HASH"
+  }
 }

@@ -1,7 +1,6 @@
 {
   "name": "turbokube-examples",
   "scripts": {
-    "docker:load": "echo $TURBO_HASH",
     "build:images": "cd ../ && TEST=false ./build.sh",
     "build": "yarn run build:images",
     "test:images": "cd ../ && BUILD=false ./build.sh",

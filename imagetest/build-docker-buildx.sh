@@ -39,8 +39,8 @@ for TARGET in $TARGETS; do
   OCI=imagetest/builds/$TARGET
   OUTPUT="type=oci,name=$NAME,dest=$OCI,tar=false,compression=uncompressed,buildinfo-attrs=true"
   TESTFROM="--image-from-oci-layout $OCI"
-  echo "$BUILDX_ARGS" | grep "platform=[^[:space:]]\+,[^[:space:]]\+" || {
-    # With single platform we can load directly to docker so that examples can run the latest build
+  [ -n "$BUILDX_ARGS" ] || {
+    # The default single platform build can be loaded directly to docker so that ../examples test get the latest build
     [ -n "$DEVTAG" ] || DEVTAG=dev
     OUTPUT="type=docker,name=$NAME:$DEVTAG"
     TESTFROM="--image $NAME:$DEVTAG"
