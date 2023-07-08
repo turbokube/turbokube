@@ -7,6 +7,8 @@ import { realpath, stat } from 'node:fs/promises';
 // import spawnwait from '@turbokube/spawnwait';
 import spawnwait from '../spawnwait/spawnwait';
 
+const DEBUGLOGS = /\blogs\b/.test(process.env.DEBUG || '');
+
 /**
  * @typedef {object} ContainerRuntimeOptions
  * @typedef {import('./Testcontainers').Container} Container
@@ -174,7 +176,13 @@ export default class ImageTestRuntime {
     /** @type {Array<Promise<any>>} */
     const stopping = [];
     ImageTestRuntime._started.forEach(container => {
-      stopping.push(container.stop());
+      if (!DEBUGLOGS) {
+        return stopping.push(container.stop());
+      }
+      stopping.push(container.logs().then(logs => {
+        console.debug('Container logs:\n' + logs);
+        return container.stop();
+      }));
     });
     ImageTestRuntime._started = [];
     await Promise.all(stopping);

@@ -15,7 +15,7 @@ describe("static-watch with single binary", () => {
   });
 
   afterAll(async () => {
-    ImageTestRuntime.stopAll();
+    await ImageTestRuntime.stopAll();
   });
 
   describe("default sync watch", () => {
@@ -45,8 +45,11 @@ describe("static-watch with single binary", () => {
       // make sure the file is copied as executable
       const stat = await container.exec('stat', ['/app/main']);
       expect(stat.stdout).toMatch(/-rwxr[w-]xr[w-]x/);
+      // make sure the file was actually synchronized
+      const cat = await container.exec('cat', ['/app/main']);
+      expect(cat.stdout).toMatch(/in testmain-exit at/i);
       await container.logs({
-        stdout: /in testmain-exit at \/app\/main/,
+        stdout: /in testmain-exit at \/app\/main/i,
         timeout: 1000,
       });
     });
