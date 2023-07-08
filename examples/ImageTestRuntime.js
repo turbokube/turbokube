@@ -101,7 +101,15 @@ class ContainerDockerCLI {
     const path = await realpath(options.local);
     const s = await stat(path);
     if (s.isDirectory()) {
-      throw new Error('folder upload is not implemented');
+      // docker cp has quite suprising dir semantics, we found no way to get the container's uid or reuse an existing dir
+      const dcommand = 'bash';
+      const dargs = [
+        '-ce',
+        `(cd "${path}"; tar cv . | docker cp - ${this.id}:${options.containerPath})`,
+      ];
+      const cp = await spawnwait(dcommand, dargs);
+      if (cp.status !== 0) throw new Error(`cp status ${cp.status}; ${cp.error}`);
+      return;
     }
     if (!s.isFile()) {
       throw new Error(`unexpected local ${path}: ${s}`);
@@ -110,17 +118,17 @@ class ContainerDockerCLI {
     args.push(path);
     args.push(`${this.id}:${options.containerPath}`);
     const cp = await spawnwait(this.options.command, args);
-    if (cp.status !== 0) throw new Error(`cp stats ${cp.status}; ${cp.error}`);
+    if (cp.status !== 0) throw new Error(`cp status ${cp.status}; ${cp.error}`);
   }
 
   /**
    * @returns {Promise<string>}
-   * @param {import('../spawnwait/index').SpawnWaitStdout} [wait]
+   * @param {import('../spawnwait/index').SpawnWaitForOutput} [wait]
    * @param {number} [tail]
    */
   async logs(wait, tail) {
     const args = ['logs'];
-    if (wait && wait.stdout) args.push('--follow');
+    if (wait?.stdout || wait?.stderr) args.push('--follow');
     if (tail !== undefined) {
       if (!Number.isInteger(tail)) throw new Error(`tail must be integer, got: ${tail}`);
       args.push('--tail', tail.toString());
@@ -208,7 +216,7 @@ export default class ImageTestRuntime {
    * @returns {Promise<string>}
    */
   async getTestImage(image) {
-    if (!/^[a-z]+-[a-z+]/.test(image)) {
+    if (!/^[a-z0-9]+-[a-z+]/.test(image)) {
       throw new Error(`Unexpected test image name: ${image}`);
     }
     const devimage = `ghcr.io/turbokube/${image}:dev`;

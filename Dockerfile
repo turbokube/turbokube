@@ -90,7 +90,7 @@ USER nonroot:nogroup
 # bin-watchexec: /usr/local/bin/watchexec from github.com/watchexec/watchexec
 FROM --platform=$TARGETPLATFORM base-build-root as bin-watchexec
 ARG TARGETARCH
-ARG watchexecVersion=1.22.2
+ARG watchexecVersion=1.22.3
 RUN set -ex; \
   export DEBIAN_FRONTEND=noninteractive; \
   runDeps=' \
@@ -175,6 +175,17 @@ ENV JAVA_VERSION=jdk-17.0.7+7 \
 # jre17-watch:
 FROM --platform=$TARGETPLATFORM jre17 as jre17-watch
 COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
+ENTRYPOINT [ "/usr/local/bin/watchexec", \
+  "--print-events", \
+  "--debounce=2000", \
+  "--shell=none", \
+  "--watch=/app", \
+  "-r", \
+  "--postpone", \
+  "--", \
+  "java", \
+  "-jar", \
+  "quarkus-run.jar" ]
 
 # install-mandrel:
 FROM --platform=$TARGETPLATFORM base-target-gcc-root as install-mandrel

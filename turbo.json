@@ -5,7 +5,9 @@
       "inputs": [
         "package.json",
         "../Dockerfile",
-        "../.dockerignore"
+        "../.dockerignore",
+        "../build.sh",
+        "../imagetest/build-docker-buildx.sh"
       ]
     },
     "test": {
