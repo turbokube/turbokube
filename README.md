@@ -66,7 +66,7 @@ The remainder of this readme concerns how to contribute to Turbokube.
 
 ### Build base images
 
- - Full build: `./build.sh`
+ - Full build for local platform: `./build.sh`
  - Example subset: `BUILD_SUBSET="^j(dk|re)17$" BUILDX_ARGS="--progress=plain" ./build.sh`
  - Re-test an already built image: `BUILD=false BUILD_SUBSET="^jdk17$" ./build.sh`
  - Run tests for each platform (assuming proper emulation): `PLATFORMS=all ./build.sh`
