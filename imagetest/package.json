@@ -1,0 +1,9 @@
+{
+  "name": "turbokube-imagetest",
+  "scripts": {
+    "build:images": "cd ../ && PLATFORMS=all TEST=false ./build.sh",
+    "build": "yarn run build:images",
+    "test:images": "cd ../ && PLATFORMS=all BUILD=false ./build.sh",
+    "test": "yarn run test:images"
+  }
+}
