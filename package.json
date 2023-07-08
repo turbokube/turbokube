@@ -1,7 +1,7 @@
 {
   "name": "turbokube",
   "version": "0.1.0",
-  "description": "Container devloops",
+  "description": "Faster container devloops",
   "author": "Repos Mjukvara AB",
   "license": "MPL-2.0",
   "homepage": "https://github.com/turbokube/monorepo#readme",
@@ -17,20 +17,19 @@
     "npm": ">=9.5.1"
   },
   "type": "module",
-  "packageManager": "yarn@4.0.0-rc.44",
+  "packageManager": "yarn@4.0.0-rc.48",
   "workspaces": [
     "examples",
     "spawnwait"
   ],
   "scripts": {
     "refresh": "yarn install",
-    "test": "echo Workspace root has not tests",
     "vscode": "yarn sdks vscode"
   },
   "devDependencies": {
-    "@tsconfig/node20": "1.0.1",
+    "@tsconfig/node20": "1.0.2",
     "@types/node": "^18",
-    "@yarnpkg/sdks": "3.0.0-rc.44",
-    "typescript": "5.1.1-rc"
+    "@yarnpkg/sdks": "3.0.0-rc.48",
+    "typescript": "5.1.6"
   }
 }
