@@ -3,6 +3,7 @@
   "scripts": {
     "build:devimages": "cd ../ && TEST=false ./build.sh",
     "build": "yarn run build:devimages",
+    "pretest": "(cd jre-quarkus-jar/command-mode-quickstart/ && mvn package) && (cd jre-quarkus-jar/rest-json-quickstart/ && mvn package)",
     "test:integration": "vitest run --single-thread",
     "test": "yarn run test:integration"
   },
