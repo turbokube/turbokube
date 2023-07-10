@@ -67,6 +67,19 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
     -
+      name: Build and push nodejs
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        target: nodejs
+        tags: |
+          ghcr.io/turbokube/nodejs:latest
+          ghcr.io/turbokube/nodejs:${{ github.sha }}
+        platforms: linux/amd64,linux/arm64
+        push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    -
       name: Build and push nodejs-watch
       uses: docker/build-push-action@v4
       with:

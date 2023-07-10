@@ -55,10 +55,10 @@ for TARGET in $TARGETS; do
       && PASSED="$PASSED $TARGET" \
       || FAILED="$FAILED $TARGET"
   }
-  grep ghcr.io/turbokube/$TARGET .github/workflows/* >/dev/null || NOTGITHUB="$NOTGITHUB $TARGET"
+  grep ghcr.io/turbokube/$TARGET: .github/workflows/* >/dev/null || NOTGITHUB="$NOTGITHUB $TARGET"
 done
 
-[ "TEST" != "false" ] || [ -z "$NOTGITHUB" ] || {
+[ "TEST" = "false" ] || [ -z "$NOTGITHUB" ] || {
   echo "=> Not built by any github action:"
   for TARGET in $NOTGITHUB; do actiontemplate $TARGET; done
 }

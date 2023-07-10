@@ -144,14 +144,21 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--" ]
 CMD [ "/app/main" ]
 
-# nodejs: Base nodejs image
+# nodejs-dist: Upstream nodejs
 FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim@sha256:1ba1ddfc61b385b6436fd0fa0d1d42d322a0cd03c1ff110fa39e828511152aef \
-  as nodejs
+  as nodejs-dist
+
+# nodejs: Base nodejs image
+FROM --platform=$TARGETPLATFORM base-target as nodejs
+COPY --from=nodejs-dist --link /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=nodejs-dist --link /usr/local/bin/node /usr/local/bin/
+ENTRYPOINT [ "/usr/local/bin/node" ]
+# sourcemaps can be surprisingly slow for some apps
+# CMD [ "--enable-source-maps", "./main.js" ]
+CMD [ "./main.js" ]
 
 # nodejs-watch: Quite opinionated js source/bundle watch
-FROM --platform=$TARGETPLATFORM base-target as nodejs-watch
-COPY --from=nodejs --link /usr/local/lib/node_modules /usr/local/lib/node_modules
-COPY --from=nodejs --link /usr/local/bin/node /usr/local/bin/
+FROM --platform=$TARGETPLATFORM nodejs as nodejs-watch
 COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec* /usr/local/bin/
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
