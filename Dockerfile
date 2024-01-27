@@ -173,14 +173,14 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 CMD [ "./main.js" ]
 COPY --chown=nonroot:nogroup nodejs/watchexec/main-wait.js main.js
 
-# jre17: Java runtime base
-FROM --platform=$TARGETPLATFORM base-target as jre17
-COPY --from=eclipse-temurin:17.0.7_7-jre /opt/java/openjdk /opt/java/openjdk
-ENV JAVA_VERSION=jdk-17.0.7+7 \
+# jre21: Java runtime base
+FROM --platform=$TARGETPLATFORM base-target as jre21
+COPY --from=eclipse-temurin:21.0.2_13-jre /opt/java/openjdk /opt/java/openjdk
+ENV JAVA_VERSION=jdk-21.0.2+13 \
   PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# jre17-watch:
-FROM --platform=$TARGETPLATFORM jre17 as jre17-watch
+# jre21-watch:
+FROM --platform=$TARGETPLATFORM jre21 as jre21-watch
 COPY --from=bin-watchexec --link --chown=0:0 /usr/local/bin/watchexec /usr/local/bin/
 ENTRYPOINT [ "/usr/local/bin/watchexec", \
   "--print-events", \
@@ -197,9 +197,9 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 # install-mandrel:
 FROM --platform=$TARGETPLATFORM base-target-gcc-root as install-mandrel
 ARG TARGETARCH
-ENV MANDREL_JAVA_VERSION=java17 \
-  MANDREL_VERSION=22.3.2.1-Final \
-  JAVA_VERSION=jdk-17.0.7+7 \
+ENV MANDREL_JAVA_VERSION=java21 \
+  MANDREL_VERSION=23.1.2.0-Final \
+  JAVA_VERSION=jdk-21.0.2+13 \
   JAVA_HOME=/usr/share/mandrel \
   PATH=/usr/share/mandrel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 RUN set -ex; \
@@ -217,17 +217,17 @@ RUN set -ex; \
   rm $MANDREL_DIST;
 RUN rm -v /usr/share/mandrel/lib/src.zip
 
-# jdk17-maven:
-FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-17@sha256:3e470e0db4a6a22ba7b5a7a2e77a8cfd14cbfdc4e8bcfdde6fff536030a3f678 \
-  as jdk17-maven
+# jdk21-maven:
+FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-21@sha256:a7fc7af5e97f7dc47f36a96fe1a08d7bccb9c5eebdb600522818087e960a3c71 \
+  as jdk21-maven
 RUN mkdir -p /home/nonroot/.m2
 
-# jdk17: Java development base, geared towards Quarkus
-FROM --platform=$TARGETPLATFORM base-target-gcc as jdk17
-COPY --from=jdk17-maven --link /usr/share/maven /usr/share/maven
-COPY --from=jdk17-maven --link --chown=65532:65534 /home/nonroot/.m2 /home/nonroot/.m2
+# jdk21: Java development base, geared towards Quarkus
+FROM --platform=$TARGETPLATFORM base-target-gcc as jdk21
+COPY --from=jdk21-maven --link /usr/share/maven /usr/share/maven
+COPY --from=jdk21-maven --link --chown=65532:65534 /home/nonroot/.m2 /home/nonroot/.m2
 COPY --from=install-mandrel --link /usr/share/mandrel /usr/share/mandrel
-ENV JAVA_VERSION=jdk-17.0.7+7 \
+ENV JAVA_VERSION=jdk-21.0.2+13 \
   JAVA_HOME=/usr/share/mandrel \
   PATH=/usr/share/mandrel/bin:/usr/share/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 VOLUME ["/home/nonroot/.m2/repository"]

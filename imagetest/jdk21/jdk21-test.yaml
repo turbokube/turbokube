@@ -12,7 +12,7 @@ commandTests:
   args:
   - -version
   expectedOutput:
-  - javac 17
+  - javac 21
 - name: Maven in path
   command: mvn
   args:

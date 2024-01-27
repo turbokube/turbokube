@@ -67,8 +67,8 @@ The remainder of this readme concerns how to contribute to Turbokube.
 ### Build base images
 
  - Full build for local platform: `./build.sh`
- - Example subset: `BUILD_SUBSET="^j(dk|re)17$" BUILDX_ARGS="--progress=plain" ./build.sh`
- - Re-test an already built image: `BUILD=false BUILD_SUBSET="^jdk17$" ./build.sh`
+ - Example subset: `BUILD_SUBSET="^j(dk|re)21$" BUILDX_ARGS="--progress=plain" ./build.sh`
+ - Re-test an already built image: `BUILD=false BUILD_SUBSET="^jdk21$" ./build.sh`
  - Run tests for each platform (assuming proper emulation): `PLATFORMS=all ./build.sh`
 
 Note that the unresolved issue [ERROR: (*service).Write failed](https://github.com/moby/buildkit/issues/3027) sometimes affect these builds. Retrying might help.

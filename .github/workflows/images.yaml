@@ -28,40 +28,40 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
     -
-      name: Build and push jdk17
+      name: Build and push jdk21
       uses: docker/build-push-action@v4
       with:
         context: .
-        target: jdk17
+        target: jdk21
         tags: |
-          ghcr.io/turbokube/jdk17:latest
-          ghcr.io/turbokube/jdk17:${{ github.sha }}
+          ghcr.io/turbokube/jdk21:latest
+          ghcr.io/turbokube/jdk21:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
     -
-      name: Build and push jre17
+      name: Build and push jre21
       uses: docker/build-push-action@v4
       with:
         context: .
-        target: jre17
+        target: jre21
         tags: |
-          ghcr.io/turbokube/jre17:latest
-          ghcr.io/turbokube/jre17:${{ github.sha }}
+          ghcr.io/turbokube/jre21:latest
+          ghcr.io/turbokube/jre21:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
     -
-      name: Build and push jre17-watch
+      name: Build and push jre21-watch
       uses: docker/build-push-action@v4
       with:
         context: .
-        target: jre17-watch
+        target: jre21-watch
         tags: |
-          ghcr.io/turbokube/jre17-watch:latest
-          ghcr.io/turbokube/jre17-watch:${{ github.sha }}
+          ghcr.io/turbokube/jre21-watch:latest
+          ghcr.io/turbokube/jre21-watch:${{ github.sha }}
         platforms: linux/amd64,linux/arm64
         push: true
         cache-from: type=gha
