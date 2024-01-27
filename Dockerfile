@@ -90,7 +90,7 @@ USER nonroot:nogroup
 # bin-watchexec: /usr/local/bin/watchexec from github.com/watchexec/watchexec
 FROM --platform=$TARGETPLATFORM base-build-root as bin-watchexec
 ARG TARGETARCH
-ARG watchexecVersion=1.22.3
+ARG watchexecVersion=1.25.1
 RUN set -ex; \
   export DEBIAN_FRONTEND=noninteractive; \
   runDeps=' \
