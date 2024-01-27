@@ -10,13 +10,13 @@
 FROM scratch as todo
 
 # base-target-root:
-FROM --platform=$TARGETPLATFORM ubuntu:23.10@sha256:4c32aacd0f7d1d3a29e82bee76f892ba9bb6a63f17f9327ca0d97c3d39b9b0ee \
+FROM --platform=$TARGETPLATFORM ubuntu:24.04@sha256:50cb325cf61fa0ac0f42c2ea431d8ef091fe3d36f5bc039d15f89c569ff4988e \
   as base-target-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /app
 
 # base-build-root:
-FROM --platform=$BUILDPLATFORM ubuntu:23.10@sha256:4c32aacd0f7d1d3a29e82bee76f892ba9bb6a63f17f9327ca0d97c3d39b9b0ee \
+FROM --platform=$BUILDPLATFORM ubuntu:24.04@sha256:50cb325cf61fa0ac0f42c2ea431d8ef091fe3d36f5bc039d15f89c569ff4988e \
   as base-build-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /workspace
