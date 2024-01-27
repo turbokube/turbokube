@@ -15,13 +15,13 @@ commandTests:
   args:
   - --version
   expectedOutput:
-  - v18\..*
+  - v20\..*
 - name: glibc version compatible with watchexec
   command: ldd
   args:
   - --version
   expectedOutput:
-  - GLIBC 2.37
+  - GLIBC 2.38
 - name: libc6 installed
   command: dpkg
   args:

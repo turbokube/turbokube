@@ -145,7 +145,7 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 CMD [ "/app/main" ]
 
 # nodejs-dist: Upstream nodejs
-FROM --platform=$TARGETPLATFORM node:18.16-bullseye-slim@sha256:1ba1ddfc61b385b6436fd0fa0d1d42d322a0cd03c1ff110fa39e828511152aef \
+FROM --platform=$TARGETPLATFORM node:20.11-bookworm-slim@sha256:2f451571a2e424b7aed654ca404331bf1ebf1ae3b4794bef0618d123d7a670e4 \
   as nodejs-dist
 
 # nodejs: Base nodejs image
