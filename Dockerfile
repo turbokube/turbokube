@@ -10,13 +10,13 @@
 FROM scratch as todo
 
 # base-target-root:
-FROM --platform=$TARGETPLATFORM ubuntu:24.04@sha256:50cb325cf61fa0ac0f42c2ea431d8ef091fe3d36f5bc039d15f89c569ff4988e \
+FROM --platform=$TARGETPLATFORM ubuntu:24.04@sha256:5b582c80ed6832665ffb6181ab4d3e5e70c30c2548fbcea1de8a0a51f161be8d \
   as base-target-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /app
 
 # base-build-root:
-FROM --platform=$BUILDPLATFORM ubuntu:24.04@sha256:50cb325cf61fa0ac0f42c2ea431d8ef091fe3d36f5bc039d15f89c569ff4988e \
+FROM --platform=$BUILDPLATFORM ubuntu:24.04@sha256:5b582c80ed6832665ffb6181ab4d3e5e70c30c2548fbcea1de8a0a51f161be8d \
   as base-build-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /workspace
@@ -145,7 +145,7 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 CMD [ "/app/main" ]
 
 # nodejs-dist: Upstream nodejs
-FROM --platform=$TARGETPLATFORM node:20.11-bookworm-slim@sha256:2f451571a2e424b7aed654ca404331bf1ebf1ae3b4794bef0618d123d7a670e4 \
+FROM --platform=$TARGETPLATFORM node:20.12-bookworm-slim@sha256:9f938a1eeb3f85ca7691e1b4b5e9ab91e1d2efa7afc1d3e495b6f8158b7e2d39 \
   as nodejs-dist
 
 # nodejs: Base nodejs image
