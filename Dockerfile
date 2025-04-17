@@ -175,8 +175,8 @@ COPY --chown=nonroot:nogroup nodejs/watchexec/main-wait.js main.js
 
 # jre21: Java runtime base
 FROM --platform=$TARGETPLATFORM base-target as jre21
-COPY --from=eclipse-temurin:21.0.3_9-jre /opt/java/openjdk /opt/java/openjdk
-ENV JAVA_VERSION=jdk-21.0.3+9 \
+COPY --from=eclipse-temurin:21.0.6_7-jre /opt/java/openjdk /opt/java/openjdk
+ENV JAVA_VERSION=jdk-21.0.6+7 \
   PATH=/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # jre21-watch:
@@ -198,8 +198,8 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 FROM --platform=$TARGETPLATFORM base-target-gcc-root as install-mandrel
 ARG TARGETARCH
 ENV MANDREL_JAVA_VERSION=java21 \
-  MANDREL_VERSION=23.1.3.1-Final \
-  JAVA_VERSION=jdk-21.0.3+9 \
+  MANDREL_VERSION=23.1.6.0-Final \
+  JAVA_VERSION=jdk-21.0.6+7 \
   JAVA_HOME=/usr/share/mandrel \
   PATH=/usr/share/mandrel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 RUN set -ex; \
@@ -218,7 +218,7 @@ RUN set -ex; \
 RUN rm -v /usr/share/mandrel/lib/src.zip
 
 # jdk21-maven:
-FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-21@sha256:3b5f7c15b1a16d3fdf09e6883cde602e4a5406cf5bdf6b251b8ac5c510219311 \
+FROM --platform=$TARGETPLATFORM maven:3.9-eclipse-temurin-21@sha256:887820a8941cc4e1bf011ec758e50acd8073bfe6046e8d9489e29ed38914e795 \
   as jdk21-maven
 RUN mkdir -p /home/nonroot/.m2
 
@@ -227,7 +227,7 @@ FROM --platform=$TARGETPLATFORM base-target-gcc as jdk21
 COPY --from=jdk21-maven --link /usr/share/maven /usr/share/maven
 COPY --from=jdk21-maven --link --chown=65532:65534 /home/nonroot/.m2 /home/nonroot/.m2
 COPY --from=install-mandrel --link /usr/share/mandrel /usr/share/mandrel
-ENV JAVA_VERSION=jdk-21.0.3+9 \
+ENV JAVA_VERSION=jdk-21.0.6+7 \
   JAVA_HOME=/usr/share/mandrel \
   PATH=/usr/share/mandrel/bin:/usr/share/maven/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 VOLUME ["/home/nonroot/.m2/repository"]

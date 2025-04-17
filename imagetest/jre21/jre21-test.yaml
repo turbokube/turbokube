@@ -3,7 +3,7 @@ schemaVersion: '2.0.0'
 metadataTest:
   envVars:
   - key: JAVA_VERSION
-    value: &javaVersion ".*21.0.2\\+13" # anchor because version+build must match expectedOutput of -version below
+    value: &javaVersion ".*21.0.6\\+7" # anchor because version+build must match expectedOutput of -version below
     isRegex: true
   - key: JAVA_VERSION
     # eclipse-temurin -jre images do have the jdk- prefix
