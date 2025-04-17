@@ -14,4 +14,4 @@ commandTests:
   args:
   - --version
   expectedOutput:
-  - v20\..*
+  - v22\..*

@@ -10,13 +10,13 @@
 FROM scratch as todo
 
 # base-target-root:
-FROM --platform=$TARGETPLATFORM ubuntu:24.04@sha256:e3f92abc0967a6c19d0dfa2d55838833e947b9d74edbcb0113e48535ad4be12a \
+FROM --platform=$TARGETPLATFORM ubuntu:24.04@sha256:1e622c5f073b4f6bfad6632f2616c7f59ef256e96fe78bf6a595d1dc4376ac02 \
   as base-target-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /app
 
 # base-build-root:
-FROM --platform=$BUILDPLATFORM ubuntu:24.04@sha256:e3f92abc0967a6c19d0dfa2d55838833e947b9d74edbcb0113e48535ad4be12a \
+FROM --platform=$BUILDPLATFORM ubuntu:24.04@sha256:1e622c5f073b4f6bfad6632f2616c7f59ef256e96fe78bf6a595d1dc4376ac02 \
   as base-build-root
 LABEL org.opencontainers.image.source="https://github.com/turbokube/turbokube"
 WORKDIR /workspace
@@ -90,7 +90,7 @@ USER nonroot:nogroup
 # bin-watchexec: /usr/local/bin/watchexec from github.com/watchexec/watchexec
 FROM --platform=$TARGETPLATFORM base-build-root as bin-watchexec
 ARG TARGETARCH
-ARG watchexecVersion=2.1.1
+ARG watchexecVersion=2.3.0
 RUN set -ex; \
   export DEBIAN_FRONTEND=noninteractive; \
   runDeps=' \
@@ -145,7 +145,7 @@ ENTRYPOINT [ "/usr/local/bin/watchexec", \
 CMD [ "/app/main" ]
 
 # nodejs-dist: Upstream nodejs
-FROM --platform=$TARGETPLATFORM node:20.14.0-bookworm-slim@sha256:a16301294ba66d2ad22d3beded4a52720f96ab208c1db0973c034d0127a4ccb0 \
+FROM --platform=$TARGETPLATFORM node:22.14.0-bookworm-slim@sha256:1c18d9ab3af4585870b92e4dbc5cac5a0dc77dd13df1a5905cea89fc720eb05b \
   as nodejs-dist
 
 # nodejs: Base nodejs image
